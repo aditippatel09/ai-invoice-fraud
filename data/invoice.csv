@@ -1,0 +1,6 @@
+invoice_number,vendor_name,invoice_date,total_amount
+INV-001,Amazon,2024-01-10,1200
+INV-002,Flipkart,2024-01-11,1300
+INV-003,Amazon,2024-01-12,1200
+INV-004,Amazon,2024-01-13,9800
+INV-005,Flipkart,2024-01-14,130
