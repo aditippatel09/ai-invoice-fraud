@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Invoice Fraud Detection</title>
+</head>
+<body>
+    <h1>AI Invoice Fraud Detection</h1>
+
+    <input type="file" id="fileInput">
+    <button onclick="checkFraud()">Check Fraud</button>
+
+    <pre id="result"></pre>
+
+    <script>
+        function checkFraud() {
+            const file = document.getElementById("fileInput").files[0];
+            const formData = new FormData();
+            formData.append("file", file);
+
+            fetch("http://127.0.0.1:5000/check-fraud", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("result").textContent =
+                    JSON.stringify(data, null, 2);
+            });
+        }
+    </script>
+</body>
+</html>

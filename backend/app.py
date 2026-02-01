@@ -1,26 +1,22 @@
-import pandas as pd
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from fraud_logic import detect_fraud
+import os
 
-# Load invoice data
-data = pd.read_csv("data/invoice.csv")
+app = Flask(__name__)
+CORS(app)
 
-print("INVOICE FRAUD REPORT\n")
+UPLOAD_FOLDER = "backend/uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Rule 1: Duplicate invoice numbers
-dup_invoice_numbers = data[data.duplicated(subset="invoice_number", keep=False)]
-print("Duplicate invoice numbers:")
-print(dup_invoice_numbers if not dup_invoice_numbers.empty else "None")
-print()
+@app.route("/check-fraud", methods=["POST"])
+def check_fraud():
+    file = request.files["file"]
+    file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+    file.save(file_path)
 
-# Rule 2: Same vendor + same amount
-dup_vendor_amount = data[data.duplicated(subset=["vendor_name", "total_amount"], keep=False)]
-print("Duplicate vendor & amount:")
-print(dup_vendor_amount if not dup_vendor_amount.empty else "None")
-print()
+    report = detect_fraud(file_path)
+    return jsonify(report)
 
-# Rule 3: Abnormally high invoice amount
-average_amount = data["total_amount"].mean()
-threshold = average_amount * 2
-
-high_amounts = data[data["total_amount"] > threshold]
-print("Abnormally high invoices:")
-print(high_amounts if not high_amounts.empty else "None")
+if __name__ == "__main__":
+    app.run(debug=True)
